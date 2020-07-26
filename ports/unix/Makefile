@@ -44,7 +44,6 @@ CFLAGS += $(INC) $(CWARN) -std=gnu99 -DUNIX $(CFLAGS_MOD) $(COPT) -I$(VARIANT_DI
 
 # Debugging/Optimization
 ifdef DEBUG
-CFLAGS += -g3
 COPT ?= -O0
 else
 COPT ?= -Os
@@ -100,7 +99,7 @@ else
 # Use gcc syntax for map file
 LDFLAGS_ARCH = -Wl,-Map=$@.map,--cref -Wl,--gc-sections
 endif
-LDFLAGS += $(LDFLAGS_MOD) $(LDFLAGS_ARCH) -lm $(LDFLAGS_EXTRA) -lSDL2
+LDFLAGS += $(LDFLAGS_MOD) $(LDFLAGS_ARCH) -lm $(LDFLAGS_EXTRA)
 
 # Flags to link with pthread library
 LIBPTHREAD = -lpthread
@@ -204,19 +203,10 @@ SRC_C = \
 	$(wildcard $(VARIANT_DIR)/*.c)
 
 LIB_SRC_C += $(addprefix lib/,\
-    lv_bindings/driver/SDL/SDL_monitor.c \
-    lv_bindings/driver/SDL/SDL_mouse.c \
-	lv_bindings/driver/SDL/modSDL.c \
 	$(LIB_SRC_C_EXTRA) \
 	timeutils/timeutils.c \
 	utils/gchelper_generic.c \
 	)
-
-ifneq ($(UNAME_S),Darwin)
-LIB_SRC_C += $(addprefix lib/,\
-	lv_bindings/driver/linux/modfb.c \
-	)
-endif
 
 OBJ = $(PY_O)
 OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))

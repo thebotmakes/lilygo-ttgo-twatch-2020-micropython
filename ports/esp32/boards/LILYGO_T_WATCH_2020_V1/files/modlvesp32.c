@@ -38,7 +38,7 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_lv_task_handler_obj, mp_lv_task_handler);
 
 static void vTimerCallback(TimerHandle_t pxTimer)
 {
-    lv_tick_inc(15);
+    lv_tick_inc(portTICK_RATE_MS);
     mp_sched_schedule((mp_obj_t)&mp_lv_task_handler_obj, mp_const_none);
 }
 
@@ -50,7 +50,7 @@ STATIC mp_obj_t mp_init_lvesp32()
 
     xTimer = xTimerCreate(
                 "lvgl_timer",
-                pdMS_TO_TICKS(15),              // The timer period in ticks.
+                1,              // The timer period in ticks.
                 pdTRUE,         // The timers will auto-reload themselves when they expire.
                 NULL,           // User data passed to callback
                 vTimerCallback  // Callback function

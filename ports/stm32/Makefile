@@ -191,6 +191,7 @@ LIBM_SRC_C = $(addprefix lib/libm_dbl/,\
 	nearbyint.c \
 	pow.c \
 	rint.c \
+	round.c \
 	scalbn.c \
 	sin.c \
 	sinh.c \
@@ -472,6 +473,9 @@ endif
 ifeq ($(MICROPY_SSL_MBEDTLS),1)
 CFLAGS_MOD += -DMBEDTLS_CONFIG_FILE='"mbedtls/mbedtls_config.h"'
 SRC_MOD += mbedtls/mbedtls_port.c
+# replace mbedtls' error.c by ours
+SRC_MOD := $(filter-out %/mbedtls/library/error.c, $(SRC_MOD))
+LIB_SRC_C += lib/mbedtls_errors/mp_mbedtls_errors.c
 endif
 
 ifeq ($(MICROPY_PY_BLUETOOTH),1)
@@ -498,19 +502,6 @@ ifeq ($(MICROPY_PY_NETWORK_CYW43),1)
 DRIVERS_SRC_C += drivers/cyw43/cywbt.c
 endif
 
-endif
-
-ifeq ($(MICROPY_PY_LVGL),1)
-CFLAGS += -DMICROPY_PY_LVGL
-SRC_LIB += $(shell find $(LVGL_BINDING_DIR)/driver/stm32/$(BOARD)/*.c)
-SRC_LIB += $(shell find $(LVGL_BINDING_DIR)/driver/stm32/string1.c)
-ifeq ($(MCU_SERIES),$(filter $(MCU_SERIES),f7))
-SRC_HAL += $(addprefix $(HAL_DIR)/Src/stm32$(MCU_SERIES)xx_,\
-	hal_ltdc.c \
-	hal_ltdc_ex.c \
-	hal_dma2d.c \
-	)
-endif
 endif
 
 OBJ =
