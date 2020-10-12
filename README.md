@@ -1,4 +1,4 @@
-# :snake: MicroPython for LilyGO TTGO T-Watch-2020 :snake:
+# :snake: MicroPython for LilyGO TTGO T-Watch-2020 :snake: ![Build firmware](https://github.com/OPHoperHPO/lilygo-ttgo-twatch-2020-micropython/workflows/Build%20firmware/badge.svg)
 ************************************************************************
 ## 📄 Description:
 This is a fork of the official version of the micropython v1.13 with **bluetooth support**. \
