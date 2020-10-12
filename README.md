@@ -38,12 +38,10 @@ This micropython fork is **SPECIALLY** sharpened and designed for LilyGO TTGO T-
 > For api look `ports/esp32/boards/LILYGO_T_WATCH_2020_V1` folder
 ************************************************************************
 ## :arrow_down: Download prebuild firmware:
-**[Download](https://github.com/OPHoperHPO/lilygo-ttgo-twatch-2020-micropython/releases/download/1.2/firmware.bin)**
+**[Download](https://raw.githubusercontent.com/OPHoperHPO/lilygo-ttgo-twatch-2020-micropython/1.13/ports/esp32/build-LILYGO_T_WATCH_2020_V1/firmware.bin)**
 ### Versions of the programs that were used to build the image:
 1. **ESP-IDF** - 4.0
-2. **Micropython** - 1.12
-3. **lvgl** - 7.*
-> See the `latest` branch for the latest micropython version.
+2. **Micropython** - 1.13
 ************************************************************************
 ## 🔨 Build Instructions
 ### 🧷 WARNING:

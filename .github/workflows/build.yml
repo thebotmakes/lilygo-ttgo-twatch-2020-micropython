@@ -2,7 +2,7 @@ name: Build firmware
 
 on:
   push:
-    branches: [ micropython1.13 ]
+    branches: [ 1.13 ]
 
 jobs:
   build:
@@ -20,6 +20,7 @@ jobs:
       run: git submodule update --init --recursive
     - name: Install esp-idf
       run: |
+        mkdir -p $HOME/projects/c
         git clone https://github.com/espressif/esp-idf.git $HOME/projects/c/esp-idf
         cd $HOME/projects/c/esp-idf && git checkout 4c81978a3e2220674a432a588292a4c860eef27b && git submodule update --init --recursive && ./install.sh && . ./export.sh
     - name: Build mpy-cross
