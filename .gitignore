@@ -38,8 +38,7 @@ build-*/
 
 # Test failure outputs
 ######################
-tests/*.exp
-tests/*.out
+tests/results/*
 
 # Python cache files
 ######################
@@ -55,6 +54,6 @@ ports/javascript/node_modules
 # Generated rst files
 ######################
 genrst/
-
+./.idea
 lextab.py
 yacctab.py

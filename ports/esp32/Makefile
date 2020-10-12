@@ -167,6 +167,17 @@ INC_ESPCOMP += -I$(ESPCOMP)/mbedtls/mbedtls/include
 INC_ESPCOMP += -I$(ESPCOMP)/mbedtls/port/include
 INC_ESPCOMP += -I$(ESPCOMP)/mdns/include
 INC_ESPCOMP += -I$(ESPCOMP)/mdns/private_include
+
+INC_ESPCOMP += -I$(ESPCOMP)/esp_http_client/include
+INC_ESPCOMP += -I$(ESPCOMP)/esp_http_client/lib/include
+INC_ESPCOMP += -I$(ESPCOMP)/nghttp/port/include
+INC_ESPCOMP += -I$(ESPCOMP)/nghttp/nghttp2/lib/includes
+INC_ESPCOMP += -I$(ESPCOMP)/nghttp/private_include
+INC_ESPCOMP += -I$(ESPCOMP)/tcp_transport/include
+INC_ESPCOMP += -I$(ESPCOMP)/tcp_transport/private_include
+INC_ESPCOMP += -I$(ESPCOMP)/esp-tls
+INC_ESPCOMP += -I$(ESPCOMP)/esp-tls/private_include
+
 INC_ESPCOMP += -I$(ESPCOMP)/spi_flash/include
 INC_ESPCOMP += -I$(ESPCOMP)/ulp/include
 INC_ESPCOMP += -I$(ESPCOMP)/vfs/include
@@ -362,6 +373,7 @@ EXTMOD_SRC_C += $(addprefix extmod/,\
 	)
 
 LIB_SRC_C = $(addprefix lib/,\
+	mbedtls_errors/mp_mbedtls_errors.c \
 	mp-readline/readline.c \
 	netutils/netutils.c \
 	timeutils/timeutils.c \
@@ -387,9 +399,10 @@ LIB_SRC_C += \
 	lib/lv_bindings/driver/esp32/modlvesp32.c \
 	lib/lv_bindings/driver/esp32/modrtch.c \
 	lib/lv_bindings/driver/esp32/espidf.c \
-	$(ESPIDFMOD_MODULE) \
-	lib/lv_bindings/driver/esp32/modxpt2046.c \
-	lib/lv_bindings/driver/esp32/modILI9341.c \
+	$(ESPIDFMOD_MODULE)
+	
+#	lib/lv_bindings/driver/esp32/modxpt2046.c
+#	lib/lv_bindings/driver/esp32/modILI9341.c
 
 DRIVERS_SRC_C = $(addprefix drivers/,\
 	bus/softspi.c \
@@ -527,13 +540,28 @@ ESPIDF_LWIP_O = $(patsubst %.c,%.o,\
 	$(wildcard $(ESPCOMP)/lwip/port/esp32/*/*.c) \
 	)
 
-ESPIDF_MBEDTLS_O = $(patsubst %.c,%.o,\
+# Mbedtls source files, exclude error.c in favor of lib/mbedtls_errors/mp_mbedtls_errors.c
+ESPIDF_MBEDTLS_O = $(patsubst %.c,%.o, $(filter-out %/error.c,\
 	$(wildcard $(ESPCOMP)/mbedtls/mbedtls/library/*.c) \
 	$(wildcard $(ESPCOMP)/mbedtls/port/*.c) \
 	$(wildcard $(ESPCOMP)/mbedtls/port/esp32/*.c) \
-	)
+	))
 
 ESPIDF_MDNS_O = $(patsubst %.c,%.o,$(wildcard $(ESPCOMP)/mdns/*.c))
+
+ESPIDF_HTTP_CLIENT_O = $(patsubst %.c,%.o,\
+	$(wildcard $(ESPCOMP)/esp_http_client/*.c) \
+	$(wildcard $(ESPCOMP)/esp_http_client/lib/*.c) \
+	)
+
+ESPIDF_NGHTTP_O = $(patsubst %.c,%.o,\
+	$(wildcard $(ESPCOMP)/nghttp/nghttp2/lib/*.c) \
+	$(wildcard $(ESPCOMP)/nghttp/port/*.c) \
+	)
+
+ESPIDF_TCP_TRANSPORT_O = $(patsubst %.c,%.o,$(wildcard $(ESPCOMP)/tcp_transport/*.c))
+
+ESPIDF_TLS_O = $(patsubst %.c,%.o,$(ESPCOMP)/esp-tls/esp_tls.c)
 
 ifeq ($(ESPIDF_CURHASH),$(ESPIDF_SUPHASH_V4))
 $(BUILD)/$(ESPCOMP)/wpa_supplicant/%.o: CFLAGS += -DCONFIG_WPA3_SAE -DCONFIG_IEEE80211W -DESP_SUPPLICANT -DIEEE8021X_EAPOL -DEAP_PEER_METHOD -DEAP_TLS -DEAP_TTLS -DEAP_PEAP -DEAP_MSCHAPv2 -DUSE_WPA2_TASK -DCONFIG_WPS2 -DCONFIG_WPS_PIN -DUSE_WPS_TASK -DESPRESSIF_USE -DESP32_WORKAROUND -DCONFIG_ECC -D__ets__ -Wno-strict-aliasing -I$(ESPCOMP)/wpa_supplicant/src -Wno-implicit-function-declaration
@@ -657,6 +685,12 @@ $(eval $(call gen_espidf_lib_rule,ulp,$(ESPIDF_ULP_O)))
 $(eval $(call gen_espidf_lib_rule,lwip,$(ESPIDF_LWIP_O)))
 $(eval $(call gen_espidf_lib_rule,mbedtls,$(ESPIDF_MBEDTLS_O)))
 $(eval $(call gen_espidf_lib_rule,mdns,$(ESPIDF_MDNS_O)))
+
+$(eval $(call gen_espidf_lib_rule,esp_http_client,$(ESPIDF_HTTP_CLIENT_O)))
+$(eval $(call gen_espidf_lib_rule,esp_nghttp,$(ESPIDF_NGHTTP_O)))
+$(eval $(call gen_espidf_lib_rule,esp_tcp_transport,$(ESPIDF_TCP_TRANSPORT_O)))
+$(eval $(call gen_espidf_lib_rule,esp_tls,$(ESPIDF_TLS_O)))
+
 $(eval $(call gen_espidf_lib_rule,wpa_supplicant,$(ESPIDF_WPA_SUPPLICANT_O)))
 $(eval $(call gen_espidf_lib_rule,sdmmc,$(ESPIDF_SDMMC_O)))
 $(eval $(call gen_espidf_lib_rule,bt_nimble,$(ESPIDF_BT_NIMBLE_O)))

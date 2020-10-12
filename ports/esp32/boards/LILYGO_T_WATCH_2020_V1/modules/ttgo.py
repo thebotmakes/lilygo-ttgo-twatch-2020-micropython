@@ -1,38 +1,26 @@
 # -*- coding: utf-8 -*-
 # Port of the official ttgo library for the LilyGo TTGO T-Watch 2020.
 # Author: Nikita Selin (Anodev)[https://github.com/OPHoperHPO]
-import gc
-import _thread
 import axp202
+import bma423 as BMA423
+import ft6x36
 import lvgl as lv
 import st7789_lvgl
-import ft6x36
-import bma423 as BMA423
-from pcf8563 import PCF8563
 from machine import Pin, I2C, PWM
+from pcf8563 import PCF8563
 
 
 class Watch:
-    def __init__(self, fastboot=False):
+    def __init__(self):
         self.__i2c__ = I2C(1, scl=Pin(22), sda=Pin(21))
         self.pmu = axp202.PMU(self.__i2c__)
         self.tft = self.__init_display__()
         self.touch = self.__init_touch__()
-        self.motor = None
-        self.rtc = None
-        self.bma = None
-        self.ticker = None
-        self.__fastboot__ = fastboot
-        if fastboot:
-            _thread.start_new_thread(self.__init_prep__, ())
-        else:
-            self.__init_prep__()
-
-    def __init_prep__(self):
         self.init_power()
         self.motor = Motor()
         self.rtc = PCF8563(self.__i2c__)
         self.bma = self.__init_bma__()
+        self.ticker = None
 
     def __init_touch__(self):
         ft6x36.lvgl_touch_init()
