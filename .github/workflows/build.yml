@@ -1,0 +1,29 @@
+name: Build firmware
+
+on:
+  push:
+    branches: [ micropython1.13 ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Dependencies
+      run: |
+        sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu `lsb_release -sc` main universe restricted multiverse"
+        sudo apt-get update -y -qq
+        sudo apt-get install -y build-essential libreadline-dev libffi-dev git pkg-config libsdl2-2.0-0 libsdl2-dev python3.8
+    - name: Update submodules
+      run: git submodule update --init --recursive
+    - name: Install esp-idf
+      run: |
+        git clone https://github.com/espressif/esp-idf.git $HOME/projects/c/esp-idf
+        cd $HOME/projects/c/esp-idf && git checkout 4c81978a3e2220674a432a588292a4c860eef27b && git submodule update --init --recursive && ./install.sh && . ./export.sh
+    - name: Build mpy-cross
+      run: make -j $(nproc) -C mpy-cross
+    - name: Build the esp32 port
+      run: make -j $(nproc) -C ports/esp32
+    
