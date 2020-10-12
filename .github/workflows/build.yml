@@ -28,5 +28,5 @@ jobs:
     - name: Build the esp32 port
       run: |
         cd $HOME/projects/c/esp-idf/ && . ./export.sh
-        cd $HOME/work/lilygo-ttgo-twatch-2020-micropython/ && make -j $(nproc) -C ports/esp32
+        cd $HOME/work/lilygo-ttgo-twatch-2020-micropython/lilygo-ttgo-twatch-2020-micropython/ && make -j $(nproc) -C ports/esp32
     
