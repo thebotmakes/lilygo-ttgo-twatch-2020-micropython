@@ -1,5 +1,5 @@
-ESPIDF ?= $ESPIDF
-CROSS_COMPILE ?= xtensa-esp32-elf-
+#ESPIDF ?= $ESPIDF
+#CROSS_COMPILE ?= xtensa-esp32-elf-
 PYTHON=python3
 
 BOARD ?= LILYGO_T_WATCH_2020_V1
