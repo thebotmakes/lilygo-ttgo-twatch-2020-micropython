@@ -1,0 +1,41 @@
+
+
+name: Build firmware
+
+on:
+  push:
+    branches: [ "1.13" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Dependencies
+      run: |
+        sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu `lsb_release -sc` main universe restricted multiverse"
+        sudo apt-get update -y -qq
+        sudo apt-get install -y build-essential libreadline-dev libffi-dev git pkg-config libsdl2-2.0-0 libsdl2-dev python3.8
+    - name: Update submodules
+      run: git submodule update --init --recursive
+    - name: Install esp-idf
+      run: |
+        mkdir -p $HOME/projects/c
+        git clone https://github.com/espressif/esp-idf.git $HOME/projects/c/esp-idf
+        cd $HOME/projects/c/esp-idf && git checkout 4c81978a3e2220674a432a588292a4c860eef27b \
+        && git submodule update --init --recursive && ./install.sh && . ./export.sh \
+        && pip3 install setuptools && pip3 install -r requirements.txt
+    - name: Build mpy-cross
+      run: make -j $(nproc) -C mpy-cross
+    - name: Build the esp32 port
+      run: |
+        cd $HOME/projects/c/esp-idf/ && . ./export.sh && \
+        cd $HOME/work/lilygo-ttgo-twatch-2020-micropython/lilygo-ttgo-twatch-2020-micropython/ && make -j $(nproc) -C ports/esp32
+    - name: Upload the assembled firmware
+      uses: actions/upload-artifact@v1
+      with:
+        name: firmware.bin
+        path: ports/esp32/build-LILYGO_T_WATCH_2020_V1/firmware.bin
