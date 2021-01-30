@@ -2,7 +2,8 @@ name: Build firmware
 
 on:
   push:
-    branches: [ 1.13 ]
+    branches: [ "1.13" ]
+  workflow_dispatch:
 
 jobs:
   build:
